@@ -50,6 +50,18 @@ services:
       - traefik.http.routers.staticfiles.rule=Host(`cf3.ijs.si`) && PathPrefix(`/static`,`/media`)
       - traefik.enable=true
       - traefik.http.routers.staticfiles.tls.certresolver=myresolver
+  daphne:
+    image: xflows/clowdflows-backend
+    expose:
+      - 8000
+    environment:
+      <<: *default-env
+      command: sh -c "daphne -b 0.0.0.0 -p 8000 mothra.asgi:channel_layer"
+      labels:
+        - traefik.http.routers.backend.rule=Host(`cf3.ijs.si`) && PathPrefix(`/editor-updates/`)
+        - traefik.enable=true
+        - traefik.http.routers.backend.entrypoints=websecure
+        - traefik.http.routers.backend.tls.certresolver=myresolver
   backend:
     image: xflows/clowdflows-backend
     command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=300"
@@ -81,18 +93,6 @@ services:
     environment:
       <<: *default-env
     command: sh -c "python manage.py runworker"
-  daphne:
-    image: xflows/clowdflows-backend
-    expose:
-      - 8000
-    environment:
-      <<: *default-env
-      command: sh -c "daphne -b 0.0.0.0 -p 8000 mothra.asgi:channel_layer"
-      labels:
-        - traefik.http.routers.backend.rule=Host(`cf3.ijs.si`) && PathPrefix(`/editor-updates/`)
-        - traefik.enable=true
-        - traefik.http.routers.backend.entrypoints=websecure
-        - traefik.http.routers.backend.tls.certresolver=myresolver
   watchtower:
     image: containrrr/watchtower
     volumes:
