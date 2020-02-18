@@ -74,6 +74,11 @@ services:
       - traefik.http.routers.webapp.tls.certresolver=myresolver
     expose:
       - 80
+  worker:
+    image: xflows/clowdflows-backend
+    environment:
+      <<: *default-env
+    command: sh -c "python manage.py runworker"
   watchtower:
     image: containrrr/watchtower
     volumes:
