@@ -1,0 +1,33 @@
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = false
+
+[providers]
+  [providers.docker]
+    watch = true
+    exposedByDefault = false
+
+[api]
+  insecure = true
+  dashboard = true
+  debug = false
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.websecure]
+    address = ":443"
+
+[certificatesResolvers.myresolver.acme]
+  email = "janez.kranjc@ijs.si"
+  storage = "/letsencrypt/acme.json"
+  [certificatesResolvers.myresolver.acme.httpChallenge]
+    # used during the challenge
+    entryPoint = "web"
+
+[http.middlewares]
+  [http.middlewares.https-redirectscheme.redirectScheme]
+    scheme = "https"
+    permanent = true
+

@@ -1,0 +1,81 @@
+version: '3.7'
+
+x-common-env: &default-env
+  DJANGO_SECRET_KEY: "${SECRET_KEY}"
+  DEBUG: 'false'
+  SQL_HOST: db
+  SQL_PORT: '5432'
+  WAIT_FOR_POSTGRES: "true"
+  DATABASE_URL: postgres://postgres:postgres@db/postgres
+
+services:
+  reverse-proxy:
+    image: traefik:v2.1
+    restart: always
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.toml:/traefik.toml
+      - ./letsencrypt:/letsencrypt
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`cf3.ijs.si`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+  db:
+    image: postgres:10.5-alpine
+    restart: always
+    volumes:
+      - ./volumes/postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:5.0.5-alpine
+    volumes:
+      - ./volumes/redis:/data
+    restart: always
+  staticfiles:
+    image: nginx:stable-alpine
+    expose:
+      - 80
+    volumes:
+      - ./volumes/static:/usr/share/nginx/html/static
+      - ./volumes/media:/usr/share/nginx/html/media
+    labels:
+      - traefik.http.routers.staticfiles.entrypoints=websecure,web
+      - traefik.http.routers.staticfiles.rule=Host(`cf3.ijs.si`) && PathPrefix(`/static`,`/media`)
+      - traefik.enable=true
+      - traefik.http.routers.staticfiles.tls.certresolver=myresolver
+  backend:
+    image: xflows/clowdflows-backend
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      <<: *default-env
+      COLLECTSTATIC: "true"
+      MIGRATE: "true"
+    expose:
+      - 8000
+    labels:
+      - traefik.http.routers.backend.rule=Host(`cf3.ijs.si`) && PathPrefix(`/api/`,`/admin/`)
+      - traefik.enable=true
+      - traefik.http.routers.backend.entrypoints=websecure
+      - traefik.http.routers.backend.tls.certresolver=myresolver
+    volumes:
+      - ./volumes/static:/usr/src/app/mothra/public/static
+      - ./volumes/media:/usr/src/app/mothra/public/media
+  webapp:
+    image: xflows/clowdflows-webapp
+    labels:
+      - traefik.http.routers.webapp.rule=Host(`cf3.ijs.si`)
+      - traefik.enable=true
+      - traefik.http.routers.webapp.entrypoints=websecure
+      - traefik.http.routers.webapp.tls.certresolver=myresolver
+    expose:
+      - 80
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
