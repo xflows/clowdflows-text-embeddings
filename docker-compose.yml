@@ -50,7 +50,7 @@ services:
       - traefik.http.routers.staticfiles.tls.certresolver=myresolver
   backend:
     image: xflows/clowdflows-backend
-    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=300"
     environment:
       <<: *default-env
       COLLECTSTATIC: "true"
