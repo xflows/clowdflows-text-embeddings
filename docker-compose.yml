@@ -7,6 +7,8 @@ x-common-env: &default-env
   SQL_PORT: '5432'
   WAIT_FOR_POSTGRES: "true"
   DATABASE_URL: postgres://postgres:postgres@db/postgres
+  REDIS_LAYER: "true"
+  REDIS_HOST: "redis"
 
 services:
   reverse-proxy:
