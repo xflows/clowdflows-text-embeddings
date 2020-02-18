@@ -62,6 +62,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.daphne.entrypoints=websecure
       - traefik.http.routers.daphne.tls.certresolver=myresolver
+    volumes:
+      - ./volumes/static:/usr/src/app/mothra/public/static
+      - ./volumes/media:/usr/src/app/mothra/public/media
+      - ./packages:/usr/src/app/packages
   backend:
     image: xflows/clowdflows-backend
     command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=300"
@@ -79,6 +83,7 @@ services:
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
+      - ./packages:/usr/src/app/packages
   webapp:
     image: xflows/clowdflows-webapp
     labels:
@@ -93,6 +98,10 @@ services:
     environment:
       <<: *default-env
     command: sh -c "python manage.py runworker"
+    volumes:
+      - ./volumes/static:/usr/src/app/mothra/public/static
+      - ./volumes/media:/usr/src/app/mothra/public/media
+      - ./packages:/usr/src/app/packages
   watchtower:
     image: containrrr/watchtower
     volumes:
