@@ -2,6 +2,7 @@ version: '3.7'
 
 x-common-env: &default-env
   DJANGO_SECRET_KEY: "${SECRET_KEY}"
+  HTTPS: 'true'
   DEBUG: 'false'
   SQL_HOST: db
   SQL_PORT: '5432'
