@@ -52,7 +52,9 @@ services:
       - traefik.enable=true
       - traefik.http.routers.staticfiles.tls.certresolver=myresolver
   daphne:
-    image: xflows/clowdflows-backend
+    image: cf3-ijs-si-backend
+    build:
+      context: backend/.
     expose:
       - 8000
     environment:
@@ -66,9 +68,10 @@ services:
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
-      - ./packages:/usr/src/app/packages
   backend:
-    image: xflows/clowdflows-backend
+    image: cf3-ijs-si-backend
+    build:
+      context: backend/.
     command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=300"
     environment:
       <<: *default-env
@@ -84,7 +87,6 @@ services:
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
-      - ./packages:/usr/src/app/packages
   webapp:
     image: xflows/clowdflows-webapp
     labels:
@@ -95,7 +97,9 @@ services:
     expose:
       - 80
   worker:
-    image: xflows/clowdflows-backend
+    image: cf3-ijs-si-backend
+    build:
+      context: backend/.
     environment:
       <<: *default-env
     command: sh -c "python manage.py runworker"
