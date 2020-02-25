@@ -106,7 +106,6 @@ services:
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
-      - ./packages:/usr/src/app/packages
   watchtower:
     image: containrrr/watchtower
     volumes:
