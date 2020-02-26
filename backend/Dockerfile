@@ -12,6 +12,10 @@ RUN apt-get update && \
     make && \
     make install
 
+# Java
+RUN apt-get update && \
+    apt-get install -y default-jre
+
 COPY packages /usr/src/app/packages
 RUN pip install -r packages/requirements.txt
 
