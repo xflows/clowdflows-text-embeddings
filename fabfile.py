@@ -16,4 +16,4 @@ def deploy():
 
         puts(magenta("[Updating containers]"))
         run('docker-compose pull')
-        run('docker-compose up -d --build --scale worker=4')
+        run('docker-compose up -d --build --scale worker=4 --remove-orphans')
