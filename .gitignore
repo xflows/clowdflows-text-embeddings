@@ -2,4 +2,4 @@ acme
 volumes
 letsencrypt
 .env
-
+*.pyc
