@@ -103,7 +103,6 @@ services:
     environment:
       <<: *default-env
     command: sh -c "python manage.py runworker"
-    scale: 4
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
