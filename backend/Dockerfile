@@ -16,7 +16,8 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y default-jre
 
-RUN add-apt-repository universe && \
+RUN apt-get install -y software-properties-common && \
+    add-apt-repository universe && \
     apt-get update && \
     apt-get install graphviz
     
