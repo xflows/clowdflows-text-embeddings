@@ -16,10 +16,10 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y default-jre
 
-RUN apt-get install -y software-properties-common && \
-    add-apt-repository universe && \
-    apt-get update && \
-    apt-get install graphviz
+#RUN apt-get install -y software-properties-common && \
+#    add-apt-repository universe && \
+#    apt-get update -y && \
+#    apt-get install graphviz
     
 COPY packages /usr/src/app/packages
 RUN pip install -r packages/requirements.txt
