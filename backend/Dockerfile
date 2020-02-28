@@ -16,7 +16,8 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y default-jre
 
-RUN apt-get update && \
+RUN add-apt-repository universe && \
+    apt-get update && \
     apt-get install graphviz
     
 COPY packages /usr/src/app/packages
