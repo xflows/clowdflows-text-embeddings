@@ -23,5 +23,5 @@ RUN apt-get update && \
 
 COPY packages /usr/src/app/packages
 RUN pip install -r packages/requirements.txt
-RUN pip uninstall -y msgpack-python && \
-    pip install -U msgpack
+RUN pip uninstall -y msgpack-python
+RUN pip install -U msgpack
