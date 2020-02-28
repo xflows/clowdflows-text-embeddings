@@ -20,8 +20,8 @@ RUN apt-get update && \
 #    add-apt-repository universe && \
 #    apt-get update -y && \
 #    apt-get install graphviz
-    
+
 COPY packages /usr/src/app/packages
 RUN pip install -r packages/requirements.txt
-
-
+RUN pip uninstall msgpack-python && \
+    pip install -U msgpack

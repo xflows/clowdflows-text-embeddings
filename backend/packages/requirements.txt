@@ -1,3 +1,2 @@
 -e git+git://github.com/xflows/cf_core#egg=cf_core
 git+https://github.com/xflows/rdm.git
-msgpack-python==0.5.6
