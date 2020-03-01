@@ -16,4 +16,5 @@ def deploy():
 
         puts(magenta("[Updating containers]"))
         run('docker-compose pull')
+        run('docker pull xflows/clowdflows-backend:latest')
         run('docker-compose up -d --build --scale worker=4 --remove-orphans')
