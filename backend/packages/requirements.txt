@@ -1,3 +1,3 @@
 -e git+git://github.com/xflows/cf_core#egg=cf_core
-git+https://github.com/xflows/rdm.git
-git+https://github.com/xflows/cf_data_mining.git
+-e git+https://github.com/xflows/rdm.git
+-e git+https://github.com/xflows/cf_data_mining.git
