@@ -10,6 +10,7 @@ x-common-env: &default-env
   DATABASE_URL: postgres://postgres:postgres@db/postgres
   REDIS_LAYER: "true"
   REDIS_HOST: "redis"
+  SENTRY_DSN: "http://909323eda3674ae5b0a00db5a536183e@cf3.ijs.si:9000/2"
 
 services:
   reverse-proxy:
