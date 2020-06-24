@@ -11,6 +11,7 @@ x-common-env: &default-env
   REDIS_LAYER: "true"
   REDIS_HOST: "redis"
   SENTRY_DSN: "http://909323eda3674ae5b0a00db5a536183e@cf3.ijs.si:9000/2"
+  TRANSFORMERS_CACHE: "/usr/src/transformers/"
 
 services:
   reverse-proxy:
@@ -88,6 +89,8 @@ services:
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
+      - ./volumes/transformers:/usr/src/transformers
+      - ./volumes/cf_text_embeddings:/root/.cf_text_embeddings
   webapp:
     image: xflows/clowdflows-webapp
     labels:
@@ -107,4 +110,6 @@ services:
     volumes:
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
+      - ./volumes/transformers:/usr/src/transformers
+      - ./volumes/cf_text_embeddings:/root/.cf_text_embeddings
 

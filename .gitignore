@@ -3,3 +3,4 @@ volumes
 letsencrypt
 .env
 *.pyc
+.idea
