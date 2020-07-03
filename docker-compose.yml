@@ -74,7 +74,7 @@ services:
     image: cf3-ijs-si-backend
     build:
       context: backend/.
-    command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=300"
+    command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=900"
     environment:
       <<: *default-env
       COLLECTSTATIC: "true"
