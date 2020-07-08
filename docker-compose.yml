@@ -109,6 +109,7 @@ services:
       <<: *default-env
     command: sh -c "python manage.py runworker"
     volumes:
+      - ./volumes/files:/usr/src/app/mothra/public/files
       - ./volumes/static:/usr/src/app/mothra/public/static
       - ./volumes/media:/usr/src/app/mothra/public/media
       - ./volumes/transformers:/usr/src/transformers
