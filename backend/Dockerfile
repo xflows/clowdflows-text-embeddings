@@ -4,9 +4,12 @@ FROM xflows/clowdflows-backend:latest
 RUN apt-get update && \
     apt-get install -y build-essential cmake wget && \
     cd .. && \
-    wget https://github.com/vscosta/yap-6.3/archive/yap-6.3.3.tar.gz && \
-    tar xvzf yap-6.3.3.tar.gz && \
-    cd yap-6.3-yap-6.3.3/ && \
+#    wget https://github.com/vscosta/yap-6.3/archive/yap-6.3.3.tar.gz && \
+#    tar xvzf yap-6.3.3.tar.gz && \
+    wget https://github.com/xflows/rdm/raw/master/yap-6.3.3/yap-6.3.3.zip && \
+    unzip yap-6.3.3 && \
+#    cd yap-6.3-yap-6.3.3/ && \
+    cd yap-6.3.3/ && \
     mkdir arch && cd arch && \
     export CXXFLAGS=-fpermissive && ../configure --enable-tabling=yes --with-readline=no && \
     make && \
