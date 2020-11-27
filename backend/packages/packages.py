@@ -14,7 +14,7 @@
 # What we are actually defining here is the structure of the treeview on the left hand side of the GUI.
 # Each section of the treeview can have many packages or just one.
 
-PACKAGE_TREE = [{"name": "Utility", "packages": ['cf_core'], "order": 1000},
+PACKAGE_TREE = [{"name": "Utility", "packages": ['cf_core','cf_scraping'], "order": 1000},
                 {"name": "Relational data mining", "packages": ['rdm.db', 'rdm.wrappers'], "order": 1},
                 {"name": "Scikit", "packages": ['cf_data_mining'], "order": 2},
                 {
