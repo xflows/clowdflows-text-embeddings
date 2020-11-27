@@ -82,7 +82,7 @@ services:
     expose:
       - 8000
     labels:
-      - traefik.http.routers.backend.rule=Host(`cf3.ijs.si`) && PathPrefix(`/api/`,`/admin/`)
+      - traefik.http.routers.backend.rule=Host(`cf3.ijs.si`) && PathPrefix(`/api/`,`/admin/`,`/workflows/`)
       - traefik.enable=true
       - traefik.http.routers.backend.entrypoints=websecure
       - traefik.http.routers.backend.tls.certresolver=myresolver
