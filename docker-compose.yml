@@ -1,36 +1,18 @@
 version: '3.7'
 
 x-common-env: &default-env
-  DJANGO_SECRET_KEY: "${SECRET_KEY}"
-  HTTPS: 'true'
-  DEBUG: 'false'
+  DJANGO_SECRET_KEY: "CHANGEthisIFusingINaPRODUCTIONenvironment"
+  HTTPS: 'false'
+  DEBUG: 'true'
   SQL_HOST: db
   SQL_PORT: '5432'
   WAIT_FOR_POSTGRES: "true"
   DATABASE_URL: postgres://postgres:postgres@db/postgres
   REDIS_LAYER: "true"
   REDIS_HOST: "redis"
-  SENTRY_DSN: "http://909323eda3674ae5b0a00db5a536183e@cf3.ijs.si:9000/2"
   TRANSFORMERS_CACHE: "/usr/src/transformers/"
 
 services:
-  reverse-proxy:
-    image: traefik:v2.1
-    restart: always
-    ports:
-      - "80:80"
-      - "8080:8080"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik/traefik.toml:/traefik.toml
-      - ./letsencrypt:/letsencrypt
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`cf3.ijs.si`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
   db:
     image: postgres:10.5-alpine
     restart: always
@@ -41,51 +23,17 @@ services:
     volumes:
       - ./volumes/redis:/data
     restart: always
-  staticfiles:
-    image: nginx:stable-alpine
-    expose:
-      - 80
-    volumes:
-      - ./volumes/static:/usr/share/nginx/html/static
-      - ./volumes/media:/usr/share/nginx/html/media
-    labels:
-      - traefik.http.routers.staticfiles.entrypoints=websecure
-      - traefik.http.routers.staticfiles.rule=Host(`cf3.ijs.si`) && PathPrefix(`/static`,`/media`)
-      - traefik.enable=true
-      - traefik.http.routers.staticfiles.tls.certresolver=myresolver
-  daphne:
-    image: cf3-ijs-si-backend
-    build:
-      context: backend/.
-    expose:
-      - 8000
-    environment:
-      <<: *default-env
-    command: sh -c "daphne -b 0.0.0.0 -p 8000 mothra.asgi:channel_layer"
-    labels:
-      - traefik.http.routers.daphne.rule=Host(`cf3.ijs.si`) && PathPrefix(`/editor-updates/`)
-      - traefik.enable=true
-      - traefik.http.routers.daphne.entrypoints=websecure
-      - traefik.http.routers.daphne.tls.certresolver=myresolver
-    volumes:
-      - ./volumes/static:/usr/src/app/mothra/public/static
-      - ./volumes/media:/usr/src/app/mothra/public/media
   backend:
     image: cf3-ijs-si-backend
     build:
       context: backend/.
-    command: sh -c "gunicorn mothra.wsgi:application --workers=17 --bind 0.0.0.0:8000 --timeout=900"
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
     environment:
       <<: *default-env
       COLLECTSTATIC: "true"
       MIGRATE: "true"
-    expose:
-      - 8000
-    labels:
-      - traefik.http.routers.backend.rule=Host(`cf3.ijs.si`) && PathPrefix(`/api/`,`/admin/`,`/workflows/`)
-      - traefik.enable=true
-      - traefik.http.routers.backend.entrypoints=websecure
-      - traefik.http.routers.backend.tls.certresolver=myresolver
+    ports:
+      - 127.0.0.1:8000:8000/tcp
     volumes:
       - ./volumes/files:/usr/src/app/mothra/public/files
       - ./volumes/static:/usr/src/app/mothra/public/static
@@ -93,25 +41,8 @@ services:
       - ./volumes/transformers:/usr/src/transformers
       - ./volumes/cf_text_embeddings:/root/.cf_text_embeddings
   webapp:
-    image: xflows/clowdflows-webapp
-    labels:
-      - traefik.http.routers.webapp.rule=Host(`cf3.ijs.si`)
-      - traefik.enable=true
-      - traefik.http.routers.webapp.entrypoints=websecure
-      - traefik.http.routers.webapp.tls.certresolver=myresolver
-    expose:
-      - 80
-  worker:
-    image: cf3-ijs-si-backend
+    image: cf3-ijs-si-frontend
     build:
-      context: backend/.
-    environment:
-      <<: *default-env
-    command: sh -c "python manage.py runworker"
-    volumes:
-      - ./volumes/files:/usr/src/app/mothra/public/files
-      - ./volumes/static:/usr/src/app/mothra/public/static
-      - ./volumes/media:/usr/src/app/mothra/public/media
-      - ./volumes/transformers:/usr/src/transformers
-      - ./volumes/cf_text_embeddings:/root/.cf_text_embeddings
-
+      context: frontend/.
+    ports:
+      - 127.0.0.1:8080:80/tcp
